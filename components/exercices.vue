@@ -5,7 +5,9 @@
     <p><b>{{ translation }}</b></p>
     <div class="row words-control">
       <div v-for="(word,index) in randomSequence">
-        <b-button v-on:click="wordClicked(index)" variant="outline-primary">{{ word }}</b-button>
+        <b-button v-if="errorIndex !== index" v-on:click="wordClicked(index)" variant="outline-primary">{{ word }}</b-button>
+        <!--        todo avoid inline style by class -->
+        <b-button v-else style="background: red" v-on:click="wordClicked(index)" variant="outline-primary">{{ word }}</b-button>
         &nbsp
       </div>
     </div>
@@ -46,12 +48,14 @@ export default {
       randomSequence: ["I", "two", "cups", "have"],
       collectedSequence: [],
       expectedWordIndex: null,
+      errorIndex: -1
     }
   },
   methods: {
     wordClicked(index) {
       console.log(this.randomSequence[index])
       if (this.correctSequence[this.expectedWordIndex] === this.randomSequence[index]) {
+        this.errorIndex = -1;
         this.collectedSequence[this.expectedWordIndex] = this.correctSequence[this.expectedWordIndex]
         this.expectedWordIndex++
         console.log(this.collectedSequence)
@@ -61,6 +65,8 @@ export default {
           this.$bvToast.show('winner-toast')
           this.nextSentence()
         }
+      } else {
+        this.errorIndex = index;
       }
 
     },
